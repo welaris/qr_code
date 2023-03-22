@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="qrcode.js"></script>
+<script>
+    const faktoren = ['A', 'B', 'D', 'F', 'G', 'H', 'I', 'K', 'M', 'P', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
+    const werte = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
+
+    function berechnen() {
+        if(document.getElementById("stringInput").value != "") {
+            let stringInput_var = document.getElementById("stringInput").value;
+            laenge_var = stringInput_var.length;
+            while(laenge_var < 7) {
+                stringInput_var = "0" + stringInput_var;
+                laenge_var = stringInput_var.length;
+            }
+            let firmenbuch_nummer = "";
+            summe = 0;
+            for(i=0; i<laenge_var; i++) {
+                let character_var = stringInput_var.charAt(i);
+                if (character_var != " ") {
+                    firmenbuch_nummer += character_var;
+                    if(i != laenge_var-1) {
+                        summe += berechne_firmenbuch_nummer(firmenbuch_nummer.length-1, parseInt(character_var));
+                    }
+                }
+            }
+            prufziffer = firmenbuch_nummer[6];
+            summe_modulo17 = summe%17;
+            faktor = faktoren[summe_modulo17];
+            if(faktor == prufziffer) {
+                // alert("gültige Nummer!");
+                qrcode.makeCode("gültig");
+            }
+            else {
+                // alert("ungültige Nummer!");
+                qrcode.makeCode("ungültig");
+            }
+        }
+        else {
+            alert("Geben Sie ein Text ein!");
+        }
+    }
+
+    function berechne_firmenbuch_nummer(i, char_var) {
+        result = 0;       
+
+        switch(i) {
+            case 0:
+                result = char_var*6;
+            break;
+            case 1:
+                result = char_var*4;
+            break;
+            case 2:
+                result = char_var*14;
+            break;
+            case 3:
+                result = char_var*15;
+            break;
+            case 4:
+                result = char_var*10;
+            break;
+            case 5:
+                result = char_var*1;
+            break;           
+        }
+        return result;
+    }    
+</script>
+</head>
+<body>    
+    <div class="container">
+        <h1>QR-Code</h1>
+        <label for="stringInput">Geben Sie einen Firmennummer ein: </label>
+        <input id="stringInput" type="stringInput" value="092754D" style="width:80%" /><br />
+        <div id="qrcode" style="width:100px; height:100px; margin-top:15px;"></div><br>
+        
+        <button type="button" onclick="berechnen()">Ok</button>
+        
+        <script type="text/javascript">
+        var qrcode = new QRCode(document.getElementById("qrcode"), {
+            width : 100,
+            height : 100
+        });
+        </script>
+    </div>    
+</body>
+</html>
